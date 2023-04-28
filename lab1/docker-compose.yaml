@@ -1,0 +1,117 @@
+version: "3.4"
+
+# Нам нужно задать 1 + 7 = 8 различных сервисов для прокси-сервера 
+# и по одному для каждого возможного формата.
+
+services:
+
+  proxy:
+
+    # Ключевое слово "image" позволяет задать
+    # пользовательский образ, на котором основывается контейнер.
+    # Он будет одинаковым во всех сервисах.
+    image: aaromanova/lab1_proxy:latest
+
+    # Задаем различные переменные окружения
+    environment:
+      METHOD: proxy
+      PORT: 2000
+      # Передаем адрес multicast-группы
+      MULTICAST_GROUP: "224.0.0.1"
+      MULTICAST_PORT: 5000
+
+    # Предоставляет порт 2000 для внутреннего доступа к службе native в узле Docker.
+    # Дописываю udp, так как оказалось, по умолчанию используется tcp.
+    expose:
+      - "2000/udp"
+
+    # Переадресует предоставленный порт 2000 в порт 2000/udp на хост-компьютере Docker
+    ports:
+      - "2000:2000/udp"
+
+    # Сервис будет запущен, только после старта перечисленных в этом блоке
+    depends_on:
+      - native
+      - json
+      - xml
+      - protobuf
+      - avro
+      - yaml
+      - msgpack
+
+  native:
+    image: aaromanova/lab1_server:latest
+
+    # Задаем различные переменные окружения
+    environment:
+      METHOD: native
+      PORT: 2001
+      MULTICAST_GROUP: "224.0.0.1"
+      MULTICAST_PORT: 5000
+
+    # Предоставляет порт 2001 для внутреннего доступа к службе native в узле Docker.
+    expose:
+      - "2001/udp"
+
+  # Остальные сервисы задаются аналогично native с заменой параметра окружения TYPE.
+  # оставим их создание без комментариев.
+
+  json:
+    image: aaromanova/lab1_server:latest
+    environment:
+      METHOD: json
+      PORT: 2002
+      MULTICAST_GROUP: "224.0.0.1"
+      MULTICAST_PORT: 5000
+    expose:
+      - "2002/udp"
+
+  xml:
+    image: aaromanova/lab1_server:latest
+    environment:
+      METHOD: xml
+      PORT: 2003
+      MULTICAST_GROUP: "224.0.0.1"
+      MULTICAST_PORT: 5000
+    expose:
+      - "2003/udp"
+
+  protobuf:
+    image: aaromanova/lab1_server:latest
+    environment:
+      METHOD: protobuffer
+      PORT: 2004
+      MULTICAST_GROUP: "224.0.0.1"
+      MULTICAST_PORT: 5000
+    expose:
+      - "2004/udp"
+
+  avro:
+    image: aaromanova/lab1_server:latest
+    environment:
+      METHOD: avro
+      PORT: 2005
+      MULTICAST_GROUP: "224.0.0.1"
+      MULTICAST_PORT: 5000
+    expose:
+      - "2005/udp"
+
+  yaml:
+    image: aaromanova/lab1_server:latest
+    environment:
+      METHOD: yaml
+      PORT: 2006
+      MULTICAST_GROUP: "224.0.0.1"
+      MULTICAST_PORT: 5000
+    expose:
+      - "2006/udp"
+
+  msgpack:
+    image: aaromanova/lab1_server:latest
+    environment:
+      METHOD: msgpack
+      PORT: 2007
+      MULTICAST_GROUP: "224.0.0.1"
+      MULTICAST_PORT: 5000
+    expose:
+      - "2007/udp"

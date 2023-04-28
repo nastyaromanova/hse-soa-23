@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+message MyData {
+    int32 number = 1;
+    float float = 2;
+    bool bool = 3;
+    string string = 4;
+    repeated int32 listNumber = 5;
+    repeated string listString = 6;
+    map<string, int32> dict = 7;
+}
