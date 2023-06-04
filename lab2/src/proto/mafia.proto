@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package mafiaservice;
+
+service Mafia {
+  rpc add_user (AddUserRequest) returns (Response) {}
+  rpc delete_user (BaseUserRequest) returns (Response) {}
+  rpc get_users (Empty) returns (Response) {}
+  rpc get_role (BaseUserRequest) returns (Response) {}
+  rpc help (Empty) returns (Response) {}
+  rpc exit (BaseUserRequest) returns (Response) {}
+  rpc vote_user (VoteUserRequest) returns (Response) {}
+  rpc finish_day (BaseUserRequest) returns (Response) {}
+  rpc verify (BaseUserRequest) returns (Response) {}
+  rpc init_communication_channel (stream CommunicationRequest) returns (stream CommunicationResponse) {}
+  rpc get_valid_actions (BaseUserRequest) returns (Response) {}
+}
+
+message User {
+  int32 user_id = 1;
+  string name = 2;
+}
+
+message Response {
+  StatusCode status = 1;
+  string message = 2;
+  map<string, string> data = 3;
+}
+
+message BaseUserRequest {
+  int32 user_id = 1;
+}
+
+message CommunicationRequest {
+  int32 user_id = 1;
+  string message = 2;
+  CommunicationDataType data_type = 3;
+}
+
+message CommunicationResponse {
+  string message =  1;
+  string author = 2;
+}
+
+enum CommunicationDataType {
+  EMPTY_MESSAGE = 0;
+  BROADCAST_MESSAGE = 1;
+  DECISION_MESSAGE = 2;
+  VOTE_MESSAGE = 3;
+  HANDSHAKE_MESSAGE = 4;
+}
+
+message AddUserRequest {
+  string name = 1;
+}
+
+message Empty {}
+
+message GetUsersResponse {
+  StatusCode status = 1;
+  repeated User users = 2;
+}
+
+message VoteUserRequest {
+  int32 user_id = 1;
+  int32 voted_user_id = 2;
+}
+
+message FinishDayRequest {
+  int32 user_id = 1;
+}
+
+enum StatusCode {
+  UNSPECIFIED = 0;
+
+  OK = 200;
+  CREATED = 201;
+
+  BAD_REQUEST = 400;
+  FORBIDDEN = 403;
+  NOT_FOUND = 404;
+}
