@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  rabbitmq:
+    image: 'rabbitmq:latest'
+    hostname: 'rabbitmq'
+    ports: 
+      - '5672:5672'
+      - '15672:15672'
+    labels:
+      NAME: "rabbitmq"
+
+  server:
+    build: server/
+    command: python ./server.py
+    network_mode: host
+    tty: true
+    depends_on:
+      - rabbitmq
+
+  client:
+    build: client/
+    command: python ./client.py
+    network_mode: host
+    stdin_open: true
+    tty: true
+    depends_on:
+      - rabbitmq
